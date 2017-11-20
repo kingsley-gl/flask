@@ -7,6 +7,7 @@
 # @Software:
 # @Function:
 import os
+from kombu import Queue,Exchange
 basedir = os.path.abspath(os.path.dirname(__file__))
 #DataBase_Config
 DB_URL = "192.168.1.172:3306"
@@ -35,12 +36,34 @@ class ProductionConfig(BaseConfig):
 
 class DevelopConfig(BaseConfig):
     DEBUG = True
+    #redis
     REDIS_HOST = '192.168.1.172'
     REDIS_PORT = 6379
     REDIS_DB = 0
+
+    #mongodb
     MONGODB_URI = 'mongodb://localhost:27017/test'
+
+    #celery
+    CELERY_INCLUDE = ('flask_app.tasks.files','flask_app.tasks.web')
     CELERY_BROKER_URL = 'redis://192.168.1.172:6379/1'
     CELERY_RESULT_BACKEND = 'redis://192.168.1.172:6379/2'
+    CELERYD_CONCURRENCY = 20
+    CELERYD_PREFETCH_MULTIPLIER = 4
+    CELERYD_TASK_TIME_LIMIT = 3600
+    CELERY_TASK_DEFAULT_QUEUE = 'default'
+    CELERY_ROUTES=(
+                      {'flask_app.tasks.files.*':{'queue': 'files',
+                                      'exchange':'files',
+                                      'exchange_type':'direct',
+                                      'routing_key':'files'}},
+
+                      {'flask_app.tasks.web.*':{'queue': 'web',
+                                    'exchange':'web',
+                                    'exchange_type':'direct',
+                                    'routing_key':'web'}},)
+
+    #sqlORM
     SQLALCHEMY_DATABASE_URI = "mysql+pymysql://" + DB_USER + ":" + DB_PASSWD + "@" + DB_URL + "/" + DB_NAME + "?unicode"
 
 class TestingConfig(BaseConfig):

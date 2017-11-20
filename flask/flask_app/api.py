@@ -10,7 +10,7 @@
 from flask import jsonify,abort,request
 from flask_app import _api,_fs,_pool
 from flask_restful import Resource
-from .task import test
+from flask_app.tasks import files,web
 import redis
 import json
 
@@ -47,6 +47,10 @@ class FindFile(Resource):
 
 class DeleteFile(Resource):
     def get(self,filename):
+        ret = files.test.delay(55,66)
+        ret2 = web.tst.delay(99,88)
+        print(ret.ready())
+        print(ret.get(),ret2.get())
         return jsonify({'aaa':3666})
 
 class PutFile(Resource):
