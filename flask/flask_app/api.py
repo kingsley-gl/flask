@@ -8,16 +8,15 @@
 # @Function:
 
 from flask import jsonify,abort,request
-from flask_app import _api,_fs,_pool
+from flask_app import _api,_client,_pool
 from flask_restful import Resource
 from flask_app.tasks import files,web
+import gridfs
 import redis
 import json
 
 
 _r = redis.Redis(connection_pool=_pool)
-
-
 
 
 
@@ -37,33 +36,46 @@ def prefix_url(json):
             else:
                 prefix_url(items[1])
 
-class FindFile(Resource):
-    def get(self,filename):
-        file = _fs.find_one({'filename':filename})
+def GFS_Decorator(func):
+    def wrapper(self,db_name,file_name):
+        __db = _client[db_name]
+        self._fs = gridfs.GridFS(__db)
+        self._bucket = gridfs.GridFSBucket(__db)
+        return func(self,db_name,file_name)
+    return wrapper
+
+
+class Base(object):
+    _fs = gridfs.GridFS(_client.get_database())
+    _bucket = gridfs.GridFSBucket(_client.get_database())
+
+class ListFile(Resource,Base):
+    def get(self,db_name,file_name):
+        ret = web.listing.delay(db_name,file_name)
+        return {'name':ret.get()}
+
+class FindFile(Resource,Base):
+    def get(self,db_name,file_name):
+        file = self._fs.find_one({'filename':file_name})
         if file is None:
             abort(404)
         data = json.loads(file.read().decode('utf-8'))
         return jsonify(data)
 
-class DeleteFile(Resource):
-    def get(self,filename):
-        ret = files.test.delay(55,66)
-        ret2 = web.tst.delay(99,88)
-        print(ret.ready())
-        print(ret.get(),ret2.get())
-        return jsonify({'aaa':3666})
+class DeleteFile(Resource,Base):
+    def get(self,db_name,file_name):
+        pass
 
-class PutFile(Resource):
-    def post(self,filename):
+class PutFile(Resource,Base):
+    def post(self,db_name,file_name):
+        print(file_name)
         json_data = request.get_json()
-        if filename not in json_data.keys():
+        if file_name not in json_data.keys():
             return jsonify({'error_no':'02'})
-        data = json_data[filename]
-        if _r.hset(json_data['quest_name'],filename,data):
-            #logger.debug('quest_list',json_data['quest_name'])
-            #logger.debug(json_data['quest_name'],filename)
+        data = json_data[file_name]
+        if _r.hset(json_data['quest_name'],file_name,data):
             _r.lpush('quest_list',json_data['quest_name'])
-            _r.lpush(json_data['quest_name'],filename)
+            _r.lpush(json_data['quest_name'],file_name)
             return jsonify({'error_no':'00'})
         else:
             return jsonify({'error_no':'03'})
@@ -73,7 +85,8 @@ class TestAPI(Resource):
     def get(self,filename):
         pass
 
-_api.add_resource(FindFile,'/gfsFind/<string:filename>')
-_api.add_resource(DeleteFile,'/gfsDel/<string:filename>')
-_api.add_resource(PutFile,'/gfsPut/<string:filename>')
-_api.add_resource(TestAPI,'/gfsTestAPI/<string:filename>')
+_api.add_resource(ListFile,'/gfsList/<string:db_name>/<string:file_name>')
+_api.add_resource(FindFile,'/gfsFind/<string:db_name>/<string:file_name>')
+_api.add_resource(DeleteFile,'/gfsDel/<string:db_name>/<string:file_name>')
+_api.add_resource(PutFile,'/gfsPut/<string:db_name>/<string:file_name>')
+_api.add_resource(TestAPI,'/gfsTestAPI/<string:db_name>/<string:file_name>')

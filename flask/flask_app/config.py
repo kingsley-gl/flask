@@ -45,7 +45,8 @@ class DevelopConfig(BaseConfig):
     MONGODB_URI = 'mongodb://localhost:27017/test'
 
     #celery
-    CELERY_INCLUDE = ('flask_app.tasks.files','flask_app.tasks.web')
+    CELERY_INCLUDE = ('flask_app.tasks.files',
+                      'flask_app.tasks.web',)
     CELERY_BROKER_URL = 'redis://192.168.1.172:6379/1'
     CELERY_RESULT_BACKEND = 'redis://192.168.1.172:6379/2'
     CELERYD_CONCURRENCY = 20

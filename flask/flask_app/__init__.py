@@ -12,7 +12,6 @@ from flask_app.config import config
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
 from pymongo import MongoClient
-import gridfs
 from flask_cors import *
 from celery import Celery
 import redis
@@ -44,8 +43,6 @@ except Exception as e:
     app.logger.error(e)
 try:
     _client = MongoClient(app.config['MONGODB_URI'])
-    _fs = gridfs.GridFS(_client.get_database())
-    _bucket = gridfs.GridFSBucket(_client.get_database())
 except Exception as e:
     app.logger.error(e)
 try:

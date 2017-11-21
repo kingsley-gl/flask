@@ -13,5 +13,4 @@ from flask_app.tasks import _cel,BaseTask
 
 @_cel.task(base=BaseTask)
 def test(a,b):
-
     return a + b

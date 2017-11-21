@@ -7,8 +7,18 @@
 # @Software:
 # @Function:
 
-from flask_app.tasks import _cel,BaseTask
+from flask_app.tasks import _cel,BaseTask,_client
+import gridfs
+
+def get_fs(db_name):
+    __db = _client[db_name]
+    _fs = gridfs.GridFS(__db)
+    _bucket = gridfs.GridFSBucket(__db)
+    return _fs,_bucket
+
+
 
 @_cel.task(base=BaseTask)
-def tst(a,b):
-    return a-b
+def listing(db_name,file_name):
+    _fs = get_fs(db_name)[0]
+    return _fs.list()
