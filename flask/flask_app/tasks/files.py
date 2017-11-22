@@ -17,8 +17,8 @@ def test(a,b):
     return a + b
 
 @_cel.task(base=BaseTask)
-def put_file(db_name,file):
-    _fs = get_fs(db_name)[0]
+def put_file(col_name,file):
+    _fs = get_fs(col_name)[0]
     print(file.keys())
     if all(key in ['name','data'] for key in file.keys()):
         try:
@@ -37,14 +37,14 @@ def put_file(db_name,file):
 
 
 @_cel.task(base=BaseTask)
-def get_file_data(db_name,file_name):
+def get_file_data(col_name,file_name):
     '''
     deal with small size files
-    :param db_name:
+    :param col_name: collection name
     :param file_name:
     :return:
     '''
-    _fs = get_fs(db_name)[0]
+    _fs = get_fs(col_name)[0]
     try:
         file = _fs.find_one({'filename': file_name})
         string = file.read().decode('utf-8')
@@ -55,8 +55,8 @@ def get_file_data(db_name,file_name):
         file.close()
     return data
 @_cel.task(base=BaseTask)
-def delete_file(db_name,file_name):
-    _fs = get_fs(db_name)[0]
+def delete_file(col_name,file_name):
+    _fs = get_fs(col_name)[0]
     _file = _fs.find_one({'filename':file_name})
     if not _file:
         return {'state': 'file not exist'}

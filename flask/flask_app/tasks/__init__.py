@@ -13,10 +13,10 @@ import gridfs
 
 __all__ = ['get_fs','BaseTask']
 
-def get_fs(db_name):
-    __db = _client[db_name]
-    _fs = gridfs.GridFS(__db)
-    _bucket = gridfs.GridFSBucket(__db)
+def get_fs(col_name):
+    __db = _client.get_database()
+    _fs = gridfs.GridFS(__db,col_name)
+    _bucket = gridfs.GridFSBucket(__db,col_name)
     return _fs,_bucket
 
 

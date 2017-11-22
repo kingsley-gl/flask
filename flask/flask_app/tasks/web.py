@@ -13,6 +13,6 @@ __all__ = ['list_file']
 
 
 @_cel.task(base=BaseTask)
-def list_file(db_name,file_name):
-    _fs = get_fs(db_name)[0]
+def list_file(col_name,file_name):
+    _fs = get_fs(col_name)[0]
     return _fs.list()
