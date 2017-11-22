@@ -46,7 +46,9 @@ class DevelopConfig(BaseConfig):
 
     #celery
     CELERY_INCLUDE = ('flask_app.tasks.files',
-                      'flask_app.tasks.web',)
+                      'flask_app.tasks.web',
+                      'flask_app.tasks.mega_task',)
+
     CELERY_BROKER_URL = 'redis://192.168.1.172:6379/1'
     CELERY_RESULT_BACKEND = 'redis://192.168.1.172:6379/2'
     CELERYD_CONCURRENCY = 20
@@ -58,6 +60,11 @@ class DevelopConfig(BaseConfig):
                                       'exchange':'files',
                                       'exchange_type':'direct',
                                       'routing_key':'files'}},
+
+                      {'flask_app.tasks.mega_task.*': {'queue': 'mega_task',
+                                                   'exchange': 'mega_task',
+                                                   'exchange_type': 'direct',
+                                                   'routing_key': 'mega_task'}},
 
                       {'flask_app.tasks.web.*':{'queue': 'web',
                                     'exchange':'web',

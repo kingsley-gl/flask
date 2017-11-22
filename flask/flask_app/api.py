@@ -3,14 +3,14 @@
 # @Time    : 2017/10/11
 # @Author  : kingsley kwong
 # @Site    :
-# @File    :
-# @Software:
+# @File    : api.py
+# @Software: flask_app
 # @Function:
 
 from flask import jsonify,abort,request
 from flask_app import _api,_client,_pool
 from flask_restful import Resource
-from flask_app.tasks import files,web
+from flask_app.tasks import files,web,mega_task
 import gridfs
 import redis
 import json
@@ -51,34 +51,39 @@ class Base(object):
 
 class ListFile(Resource,Base):
     def get(self,db_name,file_name):
-        ret = web.listing.delay(db_name,file_name)
+        ret = web.list_file.delay(db_name,file_name)
         return {'name':ret.get()}
 
-class FindFile(Resource,Base):
+class GetFileData(Resource,Base):
     def get(self,db_name,file_name):
-        file = self._fs.find_one({'filename':file_name})
-        if file is None:
-            abort(404)
-        data = json.loads(file.read().decode('utf-8'))
-        return jsonify(data)
+        ret = files.get_file_data.delay(db_name,file_name)
+        return jsonify(ret.get())
 
 class DeleteFile(Resource,Base):
     def get(self,db_name,file_name):
-        pass
+        ret = files.delete_file.delay(db_name,file_name)
+        return jsonify(ret.get())
 
 class PutFile(Resource,Base):
     def post(self,db_name,file_name):
-        print(file_name)
-        json_data = request.get_json()
-        if file_name not in json_data.keys():
-            return jsonify({'error_no':'02'})
-        data = json_data[file_name]
-        if _r.hset(json_data['quest_name'],file_name,data):
-            _r.lpush('quest_list',json_data['quest_name'])
-            _r.lpush(json_data['quest_name'],file_name)
-            return jsonify({'error_no':'00'})
-        else:
-            return jsonify({'error_no':'03'})
+        print(request.form,request.json,request.data)
+        if request.form:
+            file = request.form.getlist('json_data')[0]
+            file = eval(file)
+        elif request.json:
+            file = request.get_json()
+        ret = files.put_file.delay(db_name,file)
+        return jsonify(ret.get())
+        # json_data = request.get_json()
+        # if file_name not in json_data.keys():
+        #     return jsonify({'error_no':'02'})
+        # data = json_data[file_name]
+        # if _r.hset(json_data['quest_name'],file_name,data):
+        #     _r.lpush('quest_list',json_data['quest_name'])
+        #     _r.lpush(json_data['quest_name'],file_name)
+        #     return jsonify({'error_no':'00'})
+        # else:
+        #     return jsonify({'error_no':'03'})
 
 
 class TestAPI(Resource):
@@ -86,7 +91,7 @@ class TestAPI(Resource):
         pass
 
 _api.add_resource(ListFile,'/gfsList/<string:db_name>/<string:file_name>')
-_api.add_resource(FindFile,'/gfsFind/<string:db_name>/<string:file_name>')
+_api.add_resource(GetFileData,'/gfsGet/<string:db_name>/<string:file_name>')
 _api.add_resource(DeleteFile,'/gfsDel/<string:db_name>/<string:file_name>')
 _api.add_resource(PutFile,'/gfsPut/<string:db_name>/<string:file_name>')
 _api.add_resource(TestAPI,'/gfsTestAPI/<string:db_name>/<string:file_name>')
