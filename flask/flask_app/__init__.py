@@ -16,7 +16,7 @@ from flask_cors import *
 from celery import Celery
 import redis
 
-app = Flask(__name__)
+app = Flask(__name__,static_folder='static',static_url_path='')
 CORS(app)
 app.config.from_object(config['develop'])
 
