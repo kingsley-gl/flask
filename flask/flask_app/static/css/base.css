@@ -1,0 +1,7 @@
+	body{background: #357a97; color:#101010; font-family:"微软雅黑"; font-size:14px;}
+    .foot{
+        position: absolute;
+        bottom: 0;
+        text-align: center;
+        width: 100%;
+    }

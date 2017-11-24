@@ -1,0 +1,31 @@
+{% extends "base/base.html" %}
+{% block title %}
+    Login
+{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href={{ url_for('static',filename='css/style.css') }}/>
+    <link href={{ url_for('static',filename="iconfont/style.css") }} type="text/css" rel="stylesheet"/>
+{% endblock %}
+{% block content %}
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+<div class="col-sm-8 col-md-5 center-auto pd-sm-50 pd-xs-20 main_content">
+    <p class="text-center font16">{{ self.title() }}</p>
+    <form>
+        <div class="form-group mg-t20">
+            <i class="icon-user icon_font"></i>
+            <input type="email" class="login_input" id="Email1" placeholder="请输入用户名"/>
+        </div>
+        <div class="form-group mg-t20">
+            <i class="icon-lock icon_font"></i>
+            <input type="password" class="login_input" id="Password1" placeholder="请输入密码"/>
+        </div>
+        <div class="checkbox mg-b25">
+            <label>
+                <input type="checkbox"/>记住我的登录信息
+            </label>
+        </div>
+        <button style="submit" class="login_btn">登 录</button>
+    </form>
+    </div><!--row end-->
+{% endblock %}

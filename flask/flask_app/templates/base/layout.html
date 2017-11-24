@@ -1,0 +1,12 @@
+{% extends "base/base.html" %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href={{ url_for('static',filename='css/layoutstyle.css') }}/>
+{% endblock %}
+{% block content %}
+    {% block sidebar %}
+        <div class="sider">{% include "base/sidebar.html" %}</div>
+    {% endblock %}
+    {% block body %}
+    {% endblock %}
+{% endblock %}
