@@ -6,14 +6,6 @@
 # @File    :
 # @Software:
 # @Function:
+import os
 
-
-import hashlib
-
-
-def MD5(str):
-    str = str.encode('utf-8')
-    m = hashlib.md5()
-    m.update(str)
-    return m.hexdigest()
-
+__all__ = ['filesystem','home','sqlsystem','tasksystem']

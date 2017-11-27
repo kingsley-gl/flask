@@ -99,7 +99,7 @@ body {
   background-color: #402d5c;
 }
 .sidebar-nav li:nth-child(3):before {
-  background-color: #2c426d;
+  background-color: #49396d;
 }
 .sidebar-nav li:nth-child(4):before {
   background-color: #583e7e;
@@ -117,7 +117,7 @@ body {
   background-color: #6cb4b6;
 }
 .sidebar-nav li:nth-child(9):before {
-  background-color: #9fa2bf;
+  background-color: #8ab1bf;
 }
 .sidebar-nav li:hover:before {
   -webkit-transition: width 0.2s ease-in;

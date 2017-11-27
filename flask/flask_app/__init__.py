@@ -19,6 +19,7 @@ import redis
 app = Flask(__name__,static_folder='static',static_url_path='')
 CORS(app)
 app.config.from_object(config['develop'])
+_config = app.config
 
 __all__=['doc','log','models','static','templates','views','app','api','config','task','cel_manage']
 

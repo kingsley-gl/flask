@@ -7,11 +7,11 @@
 # @Software: 
 # @Function:
 
-from .auth import auth
-from .home import home
-from .bim import bim
+from flask_app.views.backend import *
+from flask_app.views.frontend import *
 
-__all__ = ['auth','home','bim']
+
+print(all(flask_app.views.backend))
 
 auth = auth
 home = home

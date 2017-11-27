@@ -6,14 +6,5 @@
 # @File    :
 # @Software:
 # @Function:
-
-
-import hashlib
-
-
-def MD5(str):
-    str = str.encode('utf-8')
-    m = hashlib.md5()
-    m.update(str)
-    return m.hexdigest()
-
+import os
+__all__ = ['auth','bim']

@@ -19,12 +19,15 @@ DB_NAME = "test"
 class BaseConfig(object):
     DEBUG = False
     TESTING = False
+    USERNAME = 'admin'
+    PASSWORD = 'admin'
+    SECRET_KEY = os.urandom(24)
     #SESSION_COOKIE_NAME = ''
     #SESSION_COOKIE_DOMAIN = ''
     #SESSION_COOKIE_PATH = ''
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = False
-    LOGGER_NAME = 'Cesium Server'
+    LOGGER_NAME = ''
     #SERVER_NAME = '192.168.1.144:8000'
     SQLALCHEMY_DATABASE_URI='sqlite://:memory:'
     SQLALCHEMY_POOL_SIZE = 10
