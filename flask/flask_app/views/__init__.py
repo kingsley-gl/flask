@@ -7,12 +7,26 @@
 # @Software: 
 # @Function:
 
-from flask_app.views.backend import *
-from flask_app.views.frontend import *
+from ._backend import *
+from ._frontend import *
+
+_back_list = []
+_front_list = []
+
+for _module in dir(_backend):
+    if _module[0] == '_':
+        continue
+    locals()[_module] = eval(_module)
+    _back_list.append(_module)
 
 
-print(all(flask_app.views.backend))
+for _module in dir(_frontend):
+    if _module[0] == '_':
+        continue
+    locals()[_module] = eval(_module)
+    _front_list.append(_module)
 
-auth = auth
-home = home
-bim = bim
+
+__all__ = _back_list + _front_list
+
+

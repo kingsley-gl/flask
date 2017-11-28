@@ -55,12 +55,14 @@ except Exception as e:
 try:
     import flask_app.api
     from flask_app.views import *
+    #auto blueprint
+    for module in dir(flask_app.views):
+        if module[0] == '_':
+            continue
+        app.register_blueprint(eval(module + '.' +module))
 except Exception as e:
     app.logger.error(e)
 
-app.register_blueprint(auth)
-app.register_blueprint(home)
-app.register_blueprint(bim)
 
 
 

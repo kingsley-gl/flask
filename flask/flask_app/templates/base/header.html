@@ -26,7 +26,9 @@
     <div id="menu2" class="menu">
         <ul>
             {% for item in headers %}
-            <li><a href={{ url_for(item+'.'+item) }}>{{ item }}</a></li>
+                {% for key,value in item.items() %}
+                    <li><a href={{ url_for(module+'.'+key) }}>{{ value }}</a></li>
+                {% endfor %}
             {% endfor %}
         </ul>
         <div class="cls"></div>
