@@ -3,8 +3,8 @@
 # @Time    : 2017/10/11
 # @Author  : kingsley kwong
 # @Site    : 
-# @File    : 
-# @Software: 
+# @File    : views.__init__.py
+# @Software: flask_app
 # @Function:
 
 from flask import Flask

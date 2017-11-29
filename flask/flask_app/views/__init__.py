@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# @Time    : 2017/10/11
+# @Time    : 2017/11/28
 # @Author  : kingsley kwong
 # @Site    : 
-# @File    : 
-# @Software: 
+# @File    : _frontend.__init__.py
+# @Software: flask_app
 # @Function:
 
 from ._backend import *

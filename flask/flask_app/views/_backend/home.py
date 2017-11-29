@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# @Time    : 2017/10/11
+# @Time    : 2017/11/28
 # @Author  : kingsley kwong
 # @Site    : 
-# @File    : 
-# @Software: 
+# @File    : home.py
+# @Software: flask_app
 # @Function:
 
 from flask import *
@@ -13,7 +13,9 @@ from flask_app import _config
 
 home = Blueprint('home', __name__)
 #header register
-__func=[{'homepage':'home'}]
+__func=[
+		{'homepage':'home'},
+		]
 # {function_name:chinesename}
 
 @home.route('/',methods=['GET','POST'])

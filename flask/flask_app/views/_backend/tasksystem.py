@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# @Time    : 2017/10/11
+# @Time    : 2017/11/28
 # @Author  : kingsley kwong
 # @Site    :
-# @File    :
-# @Software:
+# @File    : tasksystem.py
+# @Software: flask_app
 # @Function:
 
 from flask import *
@@ -12,8 +12,11 @@ from flask import *
 
 tasksystem = Blueprint('tasksystem', __name__)
 #header register
-__func = [{'task_system':'system'}]
-# {urlname:chinesename}
+__func = [
+			# {function_name:chinese_name}
+			{'task_system':'system'},
+			]
+
 
 
 @tasksystem.route('/tasksystem',methods=['GET','POST'])

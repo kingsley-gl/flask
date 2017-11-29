@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# @Time    : 2017/10/11
+# @Time    : 2017/11/11
 # @Author  : kingsley kwong
 # @Site    :
-# @File    :
-# @Software:
+# @File    : config.py
+# @Software: flask_app
 # @Function:
 import os
 from kombu import Queue,Exchange
 basedir = os.path.abspath(os.path.dirname(__file__))
-#DataBase_Config
-DB_URL = "192.168.1.172:3306"
-DB_USER = "kingsley"
-DB_PASSWD = "123456"
-DB_NAME = "test"
+
+
 
 
 class BaseConfig(object):
@@ -33,6 +30,11 @@ class BaseConfig(object):
     SQLALCHEMY_POOL_SIZE = 10
     SQLALCHEMY_POOL_TIMEOUT = 30
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    # DataBase_Config
+    DB_URL = ""
+    DB_USER = ""
+    DB_PASSWD = ""
+    DB_NAME = ""
 
 class ProductionConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = ''
@@ -73,9 +75,15 @@ class DevelopConfig(BaseConfig):
                                     'exchange':'web',
                                     'exchange_type':'direct',
                                     'routing_key':'web'}},)
-
+    # DataBase_Config
+    DB_URL = "192.168.1.172"
+    DB_PORT = "3306"
+    DB_USER = "kingsley"
+    DB_PASSWD = "123456"
+    DB_NAME = "test"
     #sqlORM
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://" + DB_USER + ":" + DB_PASSWD + "@" + DB_URL + "/" + DB_NAME + "?unicode"
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://%s:%s@%s:%s/%s?unicode" %(DB_USER,DB_PASSWD,DB_URL,DB_PORT,DB_NAME)
+    SQLALCHEMY_POOL_TIMEOUT = 5
 
 class TestingConfig(BaseConfig):
     TESTING = True

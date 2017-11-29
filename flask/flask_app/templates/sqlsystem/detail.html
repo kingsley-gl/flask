@@ -1,7 +1,63 @@
 {% extends "base/layout.html" %}
 {% block title %}
-    SQL System
+    Detail
 {% endblock %}
 {% block body %}
-    <div>detail</div>
+    <style>
+    ul{
+        list-style: none;
+        float: left;
+
+    }
+    ul li {
+        height: 50px;
+        line-height: 50px;
+    }
+    .greenP{
+        display: inline-block;
+        width: 25px;
+        height: 25px;
+        background:green;
+        border-radius: 50%;
+        margin: 0 auto ;
+    }
+    .redP{
+        display: inline-block;
+        width: 25px;
+        height: 25px;
+        background:red;
+        border-radius: 50%;
+        margin: 0 auto ;
+    }
+
+
+    </style>
+    <div>
+        <ul style=" margin-right: 50px;">
+            <li>State:</li>
+            {% if not db_state %}
+                <li>Error Msg:</li>
+            {% endif %}
+{#            <li >Database:</li>#}
+            <li>IP Address:</li>
+            <li>Port:</li>
+            <li>User:</li>
+            <li>Password:</li>
+            <li>DB:</li>
+        </ul>
+        <ul>
+            {% if db_state %}
+                <li class=""><span class="greenP"></span></li>
+            {% else %}
+                <li class=""><span class="redP"></span></li>
+                <li>{{ error }}</li>
+            {% endif %}
+{#            <li >Mysql</li>#}
+            <li>{{ db_ip }}</li>
+            <li>{{ db_port }}</li>
+            <li>{{ db_user }}</li>
+            <li>{{ db_password }}</li>
+            <li>{{ db_name }}</li>
+        </ul>
+    </div>
 {% endblock %}

@@ -3,8 +3,8 @@
 # @Time    : 2017/10/11
 # @Author  : kingsley kwong
 # @Site    : 
-# @File    : 
-# @Software: 
+# @File    : manage.py
+# @Software: flask
 # @Function:
 from flask_app import app
 from flask_cors import *

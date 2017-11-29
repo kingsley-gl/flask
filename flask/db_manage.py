@@ -3,8 +3,9 @@
 # @Time    : 2017/10/11
 # @Author  : kingsley kwong
 # @Site    :
-# @File    :
-# @Software:
+# @File    : db_manage.py
+# @Describe: database migration manager
+# @Software: flask
 # @Function:
 
 from flask_migrate import Migrate,MigrateCommand

@@ -1,19 +1,22 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# @Time    : 2017/10/11
+# @Time    : 2017/11/28
 # @Author  : kingsley kwong
 # @Site    :
-# @File    :
-# @Software:
+# @File    : filesystem.py
+# @Software: flask_app
 # @Function:
 
 from flask import *
-import sys
+
 
 filesystem = Blueprint('filesystem', __name__)
 #header register
-__func = [{'file_system':'system'},]
-# {function_name:chinese_name}
+__func = [
+			# {function_name:chinese_name},
+			{'file_system':'system'},
+		]
+
 
 @filesystem.route('/filesystem',methods=['GET','POST'])
 def file_system():
