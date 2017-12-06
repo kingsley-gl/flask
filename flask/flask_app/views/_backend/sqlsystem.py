@@ -9,14 +9,16 @@
 
 from flask import *
 from flask_app import _config,_db
+from ._forms import PageForm
+from math import ceil
 
 sqlsystem = Blueprint('sqlsystem', __name__)
 #header register
 __func = [
 			# {function_name:chinese_name},
-			{'detail':'xiangqing'},
-		  	{'db_list':'shujukuliebiao'},
-			{'opration':'shujukubiaodan'}
+			{'detail':'详情'},
+		  	{'db_list':'数据库列表'},
+			{'opration':'数据库表单'}
 		]
 
 
@@ -50,28 +52,48 @@ def detail():
 	except KeyError:
 		return redirect(url_for('home.login'))
 
+
+
 @sqlsystem.route('/db_list',methods=['GET','POST'])
-def db_list():
+def db_list(page=1):
 	try:
 		if not session['logged_in']:
 			return redirect(url_for('home.login'))
+		form = PageForm(request.form)
 		error = None
+		length = None
+		rows=None
 		tables = []
+		perpage = form.PerPage.data
+
+
 		try:
-			for item in (_db.engine.execute('select table_name,table_rows from information_schema.tables where table_schema = "test";')):
-				print(item)
-			# for
-			# 	table = {}
-			#
-			#
-			# 	tables.append(table)
+			if form.validate_on_submit():
+				perpage=form.PerPage.data
+
+			data = _db.engine.execute('''select table_name,table_rows,create_time,table_comment 
+								from information_schema.tables 
+								where table_schema = "%s";''' %_config['DB_NAME'])
+			page = request.args.get('page',1,type=int)
+			for item in data.fetchall()[(page-1)*perpage:page*perpage]:
+				table = {}
+				table['name'] = item[0]
+				table['rows'] = item[1]
+				table['create_time'] = item[2]
+				table['comment'] = item[3]
+				tables.append(table)
+			rows = data.rowcount
+			length = int(data.rowcount / perpage) + 1
 		except Exception as e:
 			error = e
 		return render_template('sqlsystem/db_list.html',
 							   headers=__func,
 							   module='sqlsystem',
 							   error = error,
-							   tables=tables)
+							   tables=tables,
+							   length=length,
+							   rows=rows,
+							   form=form)
 	except KeyError:
 		return redirect(url_for('home.login'))
 

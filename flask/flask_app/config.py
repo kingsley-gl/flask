@@ -25,7 +25,7 @@ class BaseConfig(object):
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = False
     LOGGER_NAME = ''
-    #SERVER_NAME = '192.168.1.144:8000'
+    #CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI='sqlite://:memory:'
     SQLALCHEMY_POOL_SIZE = 10
     SQLALCHEMY_POOL_TIMEOUT = 30
@@ -75,6 +75,8 @@ class DevelopConfig(BaseConfig):
                                     'exchange':'web',
                                     'exchange_type':'direct',
                                     'routing_key':'web'}},)
+
+    CSRF_ENABLED = True
     # DataBase_Config
     DB_URL = "192.168.1.172"
     DB_PORT = "3306"

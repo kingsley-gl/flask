@@ -8,17 +8,13 @@
     {% else %}
         <div class="container">
 
+        <form id="myform" method="post" action={{ url_for('sqlsystem.db_list') }}>
+            {{ form.csrf_token }}
             <div id="example_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                 <div class="row">
                     <div class="col-sm-6">
-                        <div class="dataTables_length" id="example_length"><label>Show <select name="example_length"
-                                                                                               aria-controls="example"
-                                                                                               class="form-control input-sm">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select> entries</label></div>
+                        <div class="dataTables_length" id="example_length"><label>Show {{ form.PerPage }}
+                            entries</label></div>
                     </div>
                     <div class="col-sm-6">
                         <div id="example_filter" class="dataTables_filter"><label>Search:<input type="search"
@@ -39,75 +35,49 @@
                                     style="width: 256px;">Name
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1"
-                                    aria-label="Position: activate to sort column ascending" style="width: 397px;">Columns
+                                    aria-label="Position: activate to sort column ascending" style="width: 397px;">Comment
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1"
                                     aria-label="Office: activate to sort column ascending" style="width: 197px;">Rows
                                 </th>
                                 <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1"
-                                    aria-label="Salary: activate to sort column ascending" style="width: 155px;">Size
+                                    aria-label="Salary: activate to sort column ascending" style="width: 155px;">CreateTime
                                 </th>
                             </tr>
                             </thead>
                             <tbody>
                                 {% for item in tables%}
                                     <tr role="row" class="odd">
-                                        <td class="sorting_1">Airi Satou</td>
-                                        <td>Accountant</td>
-                                        <td>Tokyo</td>
-                                        <td>$162,700</td>
+                                        <td class="sorting_1">{{ item['name'] }}</td>
+                                        <td>{{ item['comment'] }}</td>
+                                        <td>{{ item['rows'] }}</td>
+                                        <td>{{ item['create_time'] }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-5">
-                        <div class="dataTables_info" id="example_info" role="status" aria-live="polite">Showing 1 to 10 of
-                            57 entries
-                        </div>
-                    </div>
-                    <div class="col-sm-7">
-                        <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
-                            <ul class="pagination">
-                                <li class="paginate_button previous disabled" id="example_previous"><a
-                                        href="http://www.jq22.com/demo/data-table20161210/#" aria-controls="example"
-                                        data-dt-idx="0" tabindex="0">Previous</a></li>
-                                <li class="paginate_button active"><a href="#"
-                                                                      aria-controls="example" data-dt-idx="1"
-                                                                      tabindex="0">1</a></li>
-                                <li class="paginate_button "><a href="#"
-                                                                aria-controls="example" data-dt-idx="2" tabindex="0">2</a>
-                                </li>
-                                <li class="paginate_button "><a href="#"
-                                                                aria-controls="example" data-dt-idx="3" tabindex="0">3</a>
-                                </li>
-                                <li class="paginate_button "><a href="#"
-                                                                aria-controls="example" data-dt-idx="4" tabindex="0">4</a>
-                                </li>
-                                <li class="paginate_button "><a href="#"
-                                                                aria-controls="example" data-dt-idx="5" tabindex="0">5</a>
-                                </li>
-                                <li class="paginate_button "><a href="#"
-                                                                aria-controls="example" data-dt-idx="6" tabindex="0">6</a>
-                                </li>
-                                <li class="paginate_button next" id="example_next"><a
-                                        href="#" aria-controls="example"
-                                        data-dt-idx="7" tabindex="0">Next</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            </form>
         </div>
+
     {% endif %}
 
     <script type="text/javascript">
         // For demo to fit into DataTables site builder...
-        $('#example')
+        $(document).ready(function () {
+             $('#example')
             .removeClass('display')
             .addClass('table table-striped table-bordered');
+             $('#selector').change(function () {
+                 var sel = $('#selector').val();
+{#                 {{ form.csrf_token }}#}
+                 document.getElementById("myform").submit();    
+                 //window.location.href = '/db_list'+sel;
+             });
+
+
+        });
+
     </script>
 {% endblock %}

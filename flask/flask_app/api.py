@@ -50,8 +50,8 @@ class Base(object):
     _bucket = gridfs.GridFSBucket(_client.get_database())
 
 class ListFile(Resource,Base):
-    def get(self,col_name,file_name):
-        ret = web.list_file.delay(col_name,file_name)
+    def get(self,col_name):
+        ret = web.list_file.delay(col_name)
         return {'name':ret.get()}
 
 class GetFileData(Resource,Base):
@@ -76,7 +76,7 @@ class PutFile(Resource,Base):
         return jsonify(ret.get())
 
 
-_api.add_resource(ListFile,'/gfsList/<string:col_name>/<string:file_name>')
+_api.add_resource(ListFile,'/gfsList/<string:col_name>')
 _api.add_resource(GetFileData,'/gfsGet/<string:col_name>/<string:file_name>')
 _api.add_resource(DeleteFile,'/gfsDel/<string:col_name>/<string:file_name>')
 _api.add_resource(PutFile,'/gfsPut/<string:col_name>/<string:file_name>')
