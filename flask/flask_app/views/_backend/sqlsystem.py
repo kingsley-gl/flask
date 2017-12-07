@@ -9,7 +9,7 @@
 
 from flask import *
 from flask_app import _config,_db
-from ._forms import PageForm
+from ._forms import TableForm
 from math import ceil
 
 sqlsystem = Blueprint('sqlsystem', __name__)
@@ -18,7 +18,6 @@ __func = [
 			# {function_name:chinese_name},
 			{'detail':'详情'},
 		  	{'db_list':'数据库列表'},
-			{'opration':'数据库表单'}
 		]
 
 
@@ -55,8 +54,7 @@ def detail():
 
 
 @sqlsystem.route('/db_list',methods=['GET','POST'])
-@sqlsystem.route('/db_list?<int:page>',methods=['GET','POST'])
-def db_list(page=1):
+def db_list():
 	try:
 		error = None
 		if not session['logged_in']:
@@ -64,10 +62,12 @@ def db_list(page=1):
 		# form = PageForm(request.form)
 		tables = []
 		pages = None #total page
+		page = request.args.get('page', 1, type=int)
 		perpage = 10
 		try:
 			# if form.validate_on_submit():
 			# 	perpage = form.PerPage.data
+
 			total = _db.engine.execute('''select count(*) from information_schema.tables 
 											where table_schema = "%s";''' %_config['DB_NAME'])
 			total = total.first()[0]
@@ -99,9 +99,34 @@ def db_list(page=1):
 
 @sqlsystem.route('/opration',methods=['GET','POST'])
 def opration():
+	error = None
+	form = TableForm(request.form)
+	tbname = request.args.get('tbname',None,type=str)
+	page = request.args.get('page', 1, type=int)
+	perpage = 10
 	try:
 		if not session['logged_in']:
 			return redirect(url_for('home.login'))
-		return render_template('sqlsystem/opration.html', headers=__func, module='sqlsystem')
+		try:
+			total = _db.engine.execute('''select count(*) from %s''' %tbname)
+			total = total.first()[0]
+			pages = int(ceil(float(total) / float(perpage)))
+			column = _db.engine.execute('''show columns from %s''' %tbname)
+			data = _db.engine.execute('''select * from %s order by id limit %s offset %s''' %(tbname,perpage,(page-1)*perpage))
+			TableForm.create_field('name','data_required')
+
+			for item in column.fetchall():
+				print(item)
+
+			for a,b,c,d in data.fetchall():
+				print(a,b,c,d)
+		except Exception as e:
+			error = e
+		return render_template('sqlsystem/opration.html',
+							   headers=__func,
+							   module='sqlsystem',
+							   error=error,
+							   page=page,
+							   pages=pages)
 	except KeyError:
 		return redirect(url_for('home.login'))
