@@ -55,35 +55,35 @@ def detail():
 
 
 @sqlsystem.route('/db_list',methods=['GET','POST'])
+@sqlsystem.route('/db_list?<int:page>',methods=['GET','POST'])
 def db_list(page=1):
 	try:
+		error = None
 		if not session['logged_in']:
 			return redirect(url_for('home.login'))
-		form = PageForm(request.form)
-		error = None
-		length = None
-		rows=None
+		# form = PageForm(request.form)
 		tables = []
-		perpage = form.PerPage.data
-
-
+		pages = None #total page
+		perpage = 10
 		try:
-			if form.validate_on_submit():
-				perpage=form.PerPage.data
-
+			# if form.validate_on_submit():
+			# 	perpage = form.PerPage.data
+			total = _db.engine.execute('''select count(*) from information_schema.tables 
+											where table_schema = "%s";''' %_config['DB_NAME'])
+			total = total.first()[0]
 			data = _db.engine.execute('''select table_name,table_rows,create_time,table_comment 
 								from information_schema.tables 
-								where table_schema = "%s";''' %_config['DB_NAME'])
-			page = request.args.get('page',1,type=int)
-			for item in data.fetchall()[(page-1)*perpage:page*perpage]:
+								where table_schema = "%s" 
+								order by create_time limit %s offset %s ;''' %(_config['DB_NAME'],perpage,(page-1)*perpage))
+			pages = int(ceil(float(total) / float(perpage)))
+
+			for item in data.fetchall():
 				table = {}
 				table['name'] = item[0]
 				table['rows'] = item[1]
 				table['create_time'] = item[2]
 				table['comment'] = item[3]
 				tables.append(table)
-			rows = data.rowcount
-			length = int(data.rowcount / perpage) + 1
 		except Exception as e:
 			error = e
 		return render_template('sqlsystem/db_list.html',
@@ -91,9 +91,9 @@ def db_list(page=1):
 							   module='sqlsystem',
 							   error = error,
 							   tables=tables,
-							   length=length,
-							   rows=rows,
-							   form=form)
+							   # form=form,
+							   pages=pages,
+							   page=page)
 	except KeyError:
 		return redirect(url_for('home.login'))
 

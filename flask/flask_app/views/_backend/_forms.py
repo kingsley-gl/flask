@@ -13,8 +13,10 @@ from wtforms.validators import *
 
 class PageForm(FlaskForm):
     PerPage = SelectField('PerPage',id="selector",coerce=int,default=5,choices =[(5,'5'),(10,'10'),(50,'50'),(100,'100')])
+    # Pages = IntegerField('Pages',default=1,validators=[DataRequired()])
 
-class TableForm(FlaskForm):
+
+class TablesForm(FlaskForm):
     Name = StringField('Name')
     Comment = StringField('Comment')
     Rows = IntegerField('Rows')
