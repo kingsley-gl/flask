@@ -100,7 +100,7 @@ def db_list():
 @sqlsystem.route('/opration',methods=['GET','POST'])
 def opration():
 	error = None
-	form = TableForm(request.form)
+
 	tbname = request.args.get('tbname',None,type=str)
 	page = request.args.get('page', 1, type=int)
 	perpage = 10
@@ -113,13 +113,32 @@ def opration():
 			pages = int(ceil(float(total) / float(perpage)))
 			column = _db.engine.execute('''show columns from %s''' %tbname)
 			data = _db.engine.execute('''select * from %s order by id limit %s offset %s''' %(tbname,perpage,(page-1)*perpage))
-			TableForm.create_field('name','data_required')
 
+			#meta table class
+			locals()[tbname] = type(tbname,(TableForm,),{})
+
+			#table columns add
+			col_name = []
 			for item in column.fetchall():
-				print(item)
+				col_name.append(item[0])
+				if (set(item[1]) & set('int')) == set('int'):
+					locals()[tbname].create_field(item[0], 'IntegerField')
+				elif (set(item[1]) & set('varchar')) == set('varchar'):
+					locals()[tbname].create_field(item[0], 'StringField')
+				elif (set(item[1]) & set('datetime')) == set('datetime'):
+					locals()[tbname].create_field(item[0], 'DateTimeField')
+				elif (set(item[1]) & set('date')) == set('date'):
+					locals()[tbname].create_field(item[0], 'DateField')
 
-			for a,b,c,d in data.fetchall():
-				print(a,b,c,d)
+			#records add
+			forms = []
+			for value in data.fetchall():
+				locals()['form_id_'+str(value[0])] = locals()[tbname](request.form)
+				ret = dict(zip(col_name,value)) # zip two list in dict
+				for key in ret.keys():
+					locals()['form_id_' + str(value[0])].__dict__[key].data = ret[key]
+				forms.append(locals()['form_id_' + str(value[0])])
+
 		except Exception as e:
 			error = e
 		return render_template('sqlsystem/opration.html',
@@ -127,6 +146,7 @@ def opration():
 							   module='sqlsystem',
 							   error=error,
 							   page=page,
-							   pages=pages)
+							   pages=pages,
+							    forms=forms)
 	except KeyError:
 		return redirect(url_for('home.login'))
