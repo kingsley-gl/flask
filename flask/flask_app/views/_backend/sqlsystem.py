@@ -11,6 +11,7 @@ from flask import *
 from flask_app import _config,_db
 from ._forms import TableForm
 from math import ceil
+import types
 
 sqlsystem = Blueprint('sqlsystem', __name__)
 #header register
@@ -63,7 +64,7 @@ def db_list():
 		tables = []
 		pages = None #total page
 		page = request.args.get('page', 1, type=int)
-		perpage = 10
+		perpage = 15
 		try:
 			# if form.validate_on_submit():
 			# 	perpage = form.PerPage.data
@@ -91,7 +92,6 @@ def db_list():
 							   module='sqlsystem',
 							   error = error,
 							   tables=tables,
-							   # form=form,
 							   pages=pages,
 							   page=page)
 	except KeyError:
@@ -103,7 +103,7 @@ def opration():
 
 	tbname = request.args.get('tbname',None,type=str)
 	page = request.args.get('page', 1, type=int)
-	perpage = 10
+	perpage = 15
 	try:
 		if not session['logged_in']:
 			return redirect(url_for('home.login'))
@@ -130,14 +130,32 @@ def opration():
 				elif (set(item[1]) & set('date')) == set('date'):
 					locals()[tbname].create_field(item[0], 'DateField')
 
-			#records add
 			forms = []
+			tbkeys = ''
+			tbvalues = ''
+			#records add
 			for value in data.fetchall():
 				locals()['form_id_'+str(value[0])] = locals()[tbname](request.form)
-				ret = dict(zip(col_name,value)) # zip two list in dict
-				for key in ret.keys():
-					locals()['form_id_' + str(value[0])].__dict__[key].data = ret[key]
-				forms.append(locals()['form_id_' + str(value[0])])
+				if locals()['form_id_'+str(value[0])].validate_on_submit():
+					for key in locals()['form_id_'+str(value[0])].data.keys():
+						if key == 'csrf_token':
+							continue
+						tbkeys += key + ','
+						if type(locals()['form_id_' + str(value[0])].data[key]) is type(1):
+							tbvalues += str(locals()['form_id_' + str(value[0])].data[key]) + ','
+						elif type(locals()['form_id_' + str(value[0])].data[key]) is type('a'):
+							tbvalues += '"'+str(locals()['form_id_' + str(value[0])].data[key])+'"' + ','
+					tbkeys = tbkeys[:-1]
+					tbvalues = tbvalues[:-1]
+					sql = '''replace into %s(%s) values (%s);''' %(tbname,tbkeys,tbvalues)
+					print(sql)
+					_db.engine.execute(sql)
+					return redirect(url_for('sqlsystem.opration',page=page,tbname=tbname))
+				else:
+					ret = dict(zip(col_name,value)) # zip two list in dict
+					for key in ret.keys():
+						locals()['form_id_' + str(value[0])].__dict__[key].data = ret[key]
+					forms.append(locals()['form_id_' + str(value[0])])
 
 		except Exception as e:
 			error = e
@@ -147,6 +165,6 @@ def opration():
 							   error=error,
 							   page=page,
 							   pages=pages,
-							    forms=forms)
+								forms=forms)
 	except KeyError:
 		return redirect(url_for('home.login'))
