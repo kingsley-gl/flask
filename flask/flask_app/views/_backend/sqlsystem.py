@@ -111,6 +111,7 @@ def opration():
 			total = _db.engine.execute('''select count(*) from %s''' %tbname)
 			total = total.first()[0]
 			pages = int(ceil(float(total) / float(perpage)))
+			print(pages)
 			column = _db.engine.execute('''show columns from %s''' %tbname)
 			data = _db.engine.execute('''select * from %s order by id limit %s offset %s''' %(tbname,perpage,(page-1)*perpage))
 
@@ -148,7 +149,6 @@ def opration():
 					tbkeys = tbkeys[:-1]
 					tbvalues = tbvalues[:-1]
 					sql = '''replace into %s(%s) values (%s);''' %(tbname,tbkeys,tbvalues)
-					print(sql)
 					_db.engine.execute(sql)
 					return redirect(url_for('sqlsystem.opration',page=page,tbname=tbname))
 				else:
@@ -165,6 +165,25 @@ def opration():
 							   error=error,
 							   page=page,
 							   pages=pages,
+							   tbname=tbname,
 								forms=forms)
 	except KeyError:
 		return redirect(url_for('home.login'))
+
+@sqlsystem.route('/insertRow',methods=['GET','POST'])
+def insert_row():
+	if request.method == 'POST':
+		tbname = request.args.get('tbname', None, type=str)
+		json_data = {key: dict(request.form)[key][0] for key in dict(request.form)}
+		rowkeys = ''
+		rowvalues = ''
+		for key in json_data.keys():
+			rowkeys += key + ','
+			rowvalues +=  json_data[key] + ','
+		try:
+			sql = '''insert into %s(%s) values (%s)''' %(tbname,rowkeys[:-1],rowvalues[:-1])
+			print(sql)
+			_db.engine.execute(sql)
+		except Exception as e:
+			return e
+		return 'insert data success'
