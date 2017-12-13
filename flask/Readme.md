@@ -17,4 +17,4 @@ celery -A flask_app.tasks worker --loglevel=info -Q queezes_name
 
 框架架构
 
-![image](https://github.com/kingsley-gl/flask/tree/master/flask/architechture.jpg?raw=true)
+![image](https://github.com/kingsley-gl/flask/tree/master/flask/architechture.png?raw=true)
