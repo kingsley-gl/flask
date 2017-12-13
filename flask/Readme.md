@@ -11,5 +11,10 @@
 
 
 开启celery服务
-celery -A flask_app.task worker --loglevel=info -Q queezes_name
+celery -A flask_app.tasks worker --loglevel=info -Q queezes_name
+
+
+
+框架架构
+
 

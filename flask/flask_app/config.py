@@ -87,6 +87,54 @@ class DevelopConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = "mysql+pymysql://%s:%s@%s:%s/%s?unicode" %(DB_USER,DB_PASSWD,DB_URL,DB_PORT,DB_NAME)
     SQLALCHEMY_POOL_TIMEOUT = 5
 
+class DevelopConfig2(BaseConfig):
+    DEBUG = True
+    #redis
+    REDIS_HOST = '192.168.3.108'
+    REDIS_PORT = 6379
+    REDIS_DB = 5
+
+    #mongodb
+    MONGODB_URI = 'mongodb://localhost:27017/test'
+
+    #celery
+    CELERY_INCLUDE = ('flask_app.tasks.files',
+                      'flask_app.tasks.web',
+                      'flask_app.tasks.mega_task',)
+
+    CELERY_BROKER_URL = 'redis://192.168.3.108:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://192.168.3.108:6379/1'
+    CELERYD_CONCURRENCY = 20
+    CELERYD_PREFETCH_MULTIPLIER = 4
+    CELERYD_TASK_TIME_LIMIT = 3600
+    CELERY_TASK_DEFAULT_QUEUE = 'default'
+    CELERY_ROUTES=(
+                      {'flask_app.tasks.files.*':{'queue': 'files',
+                                      'exchange':'files',
+                                      'exchange_type':'direct',
+                                      'routing_key':'files'}},
+
+                      {'flask_app.tasks.mega_task.*': {'queue': 'mega_task',
+                                                   'exchange': 'mega_task',
+                                                   'exchange_type': 'direct',
+                                                   'routing_key': 'mega_task'}},
+
+                      {'flask_app.tasks.web.*':{'queue': 'web',
+                                    'exchange':'web',
+                                    'exchange_type':'direct',
+                                    'routing_key':'web'}},)
+
+    CSRF_ENABLED = True
+    # DataBase_Config
+    DB_URL = "192.168.3.108"
+    DB_PORT = "3306"
+    DB_USER = "kingsley"
+    DB_PASSWD = "123456"
+    DB_NAME = "test"
+    #sqlORM
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://%s:%s@%s:%s/%s?unicode" %(DB_USER,DB_PASSWD,DB_URL,DB_PORT,DB_NAME)
+    SQLALCHEMY_POOL_TIMEOUT = 5
+
 class TestingConfig(BaseConfig):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = ''
@@ -94,6 +142,7 @@ class TestingConfig(BaseConfig):
 config = {
     'product':ProductionConfig,
     'develop':DevelopConfig,
+    'develop2':DevelopConfig2,
     'testing':TestingConfig
 }
 
