@@ -58,7 +58,7 @@
                                             <td>{{ column(class="a") }}</td>
                                                 {% endif %}
                                             {% endfor %}
-                                            <td><button type="submit">submit</button></td>
+                                            <td><button type="submit">edit</button><button name="del" type="button" onclick="delRowData(this)" >del</button></td>
                                         </tr>
                                     </form>
                                 {% endfor %}
@@ -107,7 +107,7 @@
 
                 {% endif %}
             {% endfor %}
-            td += "<td><button onclick='addRowData(this)' >submit</button></td>";
+            td += "<td><button onclick='addRowData(this)' >edit</button><button onclick='window.location.href = \"/opration?page={{ page }}&tbname={{ tbname }}\"' >del</button></td>";
             var trHtml = "<tr role=\"row\" class=\"odd\">"+td+"</tr>";
 
             $('#t-body tr:eq(0)').before(trHtml);
@@ -162,6 +162,45 @@
 
         }
 
+
+                function delRowData(obj) {
+            var parent = obj.parentNode;
+            var row = new Array();
+
+            while(1)
+            {
+              if (parent.previousSibling != null)
+              {
+                parent = parent.previousSibling;
+                try{
+                    var test = parent.childNodes[0].id;
+                    var column = {
+                            name:parent.childNodes[0].id,
+                            value:parent.childNodes[0].value
+                            };
+                }
+                catch (TypeError){
+                    continue
+                }
+
+                row.push(column);
+
+              }
+              else
+                  break;
+            }
+
+            $.ajax({
+                url:'{{ url_for('sqlsystem.delete_row',tbname=tbname) }}',
+                type:"POST",
+                data:row,
+                datatype:"json",
+                success:function(msg){
+                    alert(msg);
+                    window.location.href = "/opration?page={{ page }}&tbname={{ tbname }}"
+                }
+            });
+        }
 
 </script>
     {% endif %}

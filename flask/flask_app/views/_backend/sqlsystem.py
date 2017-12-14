@@ -187,3 +187,17 @@ def insert_row():
 		except Exception as e:
 			return e
 		return 'insert data success'
+
+@sqlsystem.route('/deleteRow',methods=['GET','POST'])
+def delete_row():
+	if request.method == 'POST':
+		tbname = request.args.get('tbname', None, type=str)
+		json_data = {key: dict(request.form)[key][0] for key in dict(request.form)}
+		print(json_data)
+		sql = '''delete from %s where id = %s''' %(tbname,json_data['id'])
+		print(sql)
+		try:
+			_db.engine.execute(sql)
+			return 'data delete success'
+		except Exception as e:
+			return redirect('sqlsystem.opration',error=e)
