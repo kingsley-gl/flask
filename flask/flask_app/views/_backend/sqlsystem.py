@@ -13,7 +13,7 @@ from ._forms import TableForm
 from math import ceil
 import types
 
-sqlsystem = Blueprint('sqlsystem', __name__)
+sqlsystem = Blueprint('sqlsystem', __name__, url_prefix='/sqlsystem')
 #header register
 __func = [
 			# {function_name:chinese_name},

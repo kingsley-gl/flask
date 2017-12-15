@@ -8,21 +8,28 @@
 # @Function:
 
 from flask import *
+from flask_app import _client
 
-
-filesystem = Blueprint('filesystem', __name__)
+filesystem = Blueprint('filesystem', __name__,url_prefix='/filesystem')
 #header register
 __func = [
 			# {function_name:chinese_name},
-			{'file_system':'system'},
+			{'detail':'system'},
 		]
 
 
-@filesystem.route('/filesystem',methods=['GET','POST'])
-def file_system():
+@filesystem.route('/detail',methods=['GET','POST'])
+def detail():
 	try:
 		if not session['logged_in']:
 			return redirect(url_for('home.login'))
-		return render_template('filesystem/file_system.html', headers = __func,module='filesystem')
+
+		print(_client)
+
+
+
+		return render_template('filesystem/file_system.html',
+							   headers = __func,
+							   module='filesystem')
 	except KeyError:
 		return redirect(url_for('home.login'))

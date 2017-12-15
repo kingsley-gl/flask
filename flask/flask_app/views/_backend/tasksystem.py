@@ -10,7 +10,7 @@
 from flask import *
 
 
-tasksystem = Blueprint('tasksystem', __name__)
+tasksystem = Blueprint('tasksystem', __name__,url_prefix='/tasksystem')
 #header register
 __func = [
 			# {function_name:chinese_name}

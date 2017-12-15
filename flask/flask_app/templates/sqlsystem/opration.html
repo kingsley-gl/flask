@@ -107,7 +107,7 @@
 
                 {% endif %}
             {% endfor %}
-            td += "<td><button onclick='addRowData(this)' >edit</button><button onclick='window.location.href = \"/opration?page={{ page }}&tbname={{ tbname }}\"' >del</button></td>";
+            td += "<td><button onclick='addRowData(this)' >edit</button><button onclick='window.location.href = \"{{ url_for('sqlsystem.opration',page=page,tbname=tbname) }}\"' >del</button></td>";
             var trHtml = "<tr role=\"row\" class=\"odd\">"+td+"</tr>";
 
             $('#t-body tr:eq(0)').before(trHtml);
@@ -155,7 +155,7 @@
                 data:row,
                 datatype:"json",
                 success:function(msg){
-                    window.location.href = "/opration?page={{ page }}&tbname={{ tbname }}"
+                    window.location.href = '{{ url_for('sqlsystem.opration',page=page,tbname=tbname) }}';
                 }
 
             });
@@ -163,7 +163,7 @@
         }
 
 
-                function delRowData(obj) {
+        function delRowData(obj) {
             var parent = obj.parentNode;
             var row = new Array();
 
@@ -196,8 +196,7 @@
                 data:row,
                 datatype:"json",
                 success:function(msg){
-                    alert(msg);
-                    window.location.href = "/opration?page={{ page }}&tbname={{ tbname }}"
+                    window.location.href = '{{ url_for('sqlsystem.opration',page=page,tbname=tbname) }}';//"/opration?page={{ page }}&tbname={{ tbname }}";
                 }
             });
         }
