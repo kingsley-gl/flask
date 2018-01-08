@@ -29,4 +29,4 @@ celery -A flask_app.tasks worker --loglevel=info -Q files,mega_task,web
 
 ## 框架架构示意图
 
-![image](https://github.com/kingsley-gl/flask/tree/master/flask/architechture.png)
+![image](https://github.com/kingsley-gl/flask/raw/master/flask/architechture.png)
